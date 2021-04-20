@@ -96,6 +96,7 @@ LightmapSettings:
     m_PVRFilteringAtrousPositionSigmaAO: 1
     m_ExportTrainingData: 0
     m_TrainingDataDestination: TrainingData
+    m_LightProbeSampleCountMultiplier: 4
   m_LightingDataAsset: {fileID: 0}
   m_UseShadowmask: 1
 --- !u!196 &4
@@ -475,6 +476,12 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 359ce2089411d416980ba3b75f58cdc0, type: 3}
+--- !u!4 &1693238095 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 6631964419132099031, guid: 35d11d1e1dd397942b5024ee78060e27,
+    type: 3}
+  m_PrefabInstance: {fileID: 73510359}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1793270639
 GameObject:
   m_ObjectHideFlags: 0
@@ -500,8 +507,9 @@ Light:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1793270639}
   m_Enabled: 1
-  serializedVersion: 9
+  serializedVersion: 10
   m_Type: 1
+  m_Shape: 0
   m_Color: {r: 1, g: 0.95686275, b: 0.8392157, a: 1}
   m_Intensity: 1
   m_Range: 10
@@ -591,8 +599,9 @@ Light:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1882715564}
   m_Enabled: 1
-  serializedVersion: 9
+  serializedVersion: 10
   m_Type: 1
+  m_Shape: 0
   m_Color: {r: 1, g: 0.95686275, b: 0.8392157, a: 1}
   m_Intensity: 1
   m_Range: 10
@@ -724,3 +733,44 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 1896079442}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &2029682370 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7438494788967298231, guid: b79d0b13355dc8f44b7956db61a82656,
+    type: 3}
+  m_PrefabInstance: {fileID: 396088618}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &2029682372
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2029682370}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 59b8d133eb1ed084a86893421ef3dbf6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  target: {fileID: 1693238095}
+--- !u!195 &2029682373
+NavMeshAgent:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2029682370}
+  m_Enabled: 1
+  m_AgentTypeID: 0
+  m_Radius: 0.5
+  m_Speed: 3.5
+  m_Acceleration: 8
+  avoidancePriority: 50
+  m_AngularSpeed: 120
+  m_StoppingDistance: 2
+  m_AutoTraverseOffMeshLink: 1
+  m_AutoBraking: 1
+  m_AutoRepath: 1
+  m_Height: 2
+  m_BaseOffset: 1
+  m_WalkableMask: 4294967295
+  m_ObstacleAvoidanceType: 4
