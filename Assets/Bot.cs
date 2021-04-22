@@ -9,6 +9,12 @@ public class Bot : MonoBehaviour
     public Transform target;
     public BotState state;
 
+    public float wanderRadius = 10;
+    public float wanderDistance = 10;
+    public float wanderJitter = 5;
+    private Vector3 wanderTarget = Vector3.zero;
+
+
     private Vector3 ToTarget => target.position - transform.position;
     private bool TargetIsBehind => Vector3.Dot(transform.forward, ToTarget) < 0;
     float lookAheadDistance => ToTarget.magnitude / (agent.speed + target.GetComponent<Drive>().currentSpeed);
@@ -21,7 +27,7 @@ public class Bot : MonoBehaviour
 
     void Update()
     {
-        Evade();
+        Wander();
     }
 
     void SmartPursue()
@@ -69,6 +75,16 @@ public class Bot : MonoBehaviour
 
         agent.SetDestination(targetLocation);
         state = BotState.Flee;
+    }
+
+
+    void Wander()
+    {
+        wanderTarget = new Vector3(Random.Range(-1f, 1f) * wanderJitter, 0, Random.Range(-1f, 1f) * wanderJitter);
+        wanderTarget = wanderTarget.normalized * wanderRadius;
+        Vector3 wanderDestination = wanderTarget + Vector3.forward * wanderDistance;
+        Vector3 globalDestination = transform.TransformVector(wanderDestination);
+        Seek(globalDestination);
     }
 }
 
