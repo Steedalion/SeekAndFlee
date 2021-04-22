@@ -34,6 +34,8 @@ public class Bot : MonoBehaviour
 
     void SmartPursue()
     {
+        //TODO: Test
+
         if (target.GetComponent<Drive>().currentSpeed < 0.1f)
         {
             Seek(target.position);
@@ -54,23 +56,31 @@ public class Bot : MonoBehaviour
 
     void Evade()
     {
+        //TODO: Test
+
         Flee(predictedIntersect);
     }
 
     void Pursue()
     {
+        //TODO: Test
+
         Seek(predictedIntersect);
         state = BotState.Pursue;
     }
 
     void Seek(Vector3 targetPosition)
     {
+        //TODO: Test
+
         agent.SetDestination(targetPosition);
         state = BotState.Seek;
     }
 
     void Flee(Vector3 scary)
     {
+        //TODO: Test
+
         Vector3 location = transform.position;
         Vector3 awayFrom = location - scary;
         Vector3 targetLocation = location + awayFrom;
@@ -82,6 +92,8 @@ public class Bot : MonoBehaviour
 
     void Wander()
     {
+        //TODO: Test
+
         wanderTarget = new Vector3(Random.Range(-1f, 1f) * wanderJitter, 0, Random.Range(-1f, 1f) * wanderJitter);
         wanderTarget = wanderTarget.normalized * wanderRadius;
         Vector3 wanderDestination = wanderTarget + Vector3.forward * wanderDistance;
@@ -91,6 +103,8 @@ public class Bot : MonoBehaviour
 
     void Hide()
     {
+        //TODO: Test
+
         float bestDistance = Single.PositiveInfinity;
         Vector3 chosenSpot = Vector3.zero;
         float hideDistanceBehindObstacle = 20;
