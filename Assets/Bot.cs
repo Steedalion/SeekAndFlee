@@ -1,7 +1,9 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
+using Random = UnityEngine.Random;
 
 public class Bot : MonoBehaviour
 {
@@ -27,7 +29,7 @@ public class Bot : MonoBehaviour
 
     void Update()
     {
-        Wander();
+        Hide();
     }
 
     void SmartPursue()
@@ -86,11 +88,34 @@ public class Bot : MonoBehaviour
         Vector3 globalDestination = transform.TransformVector(wanderDestination);
         Seek(globalDestination);
     }
+
+    void Hide()
+    {
+        float bestDistance = Single.PositiveInfinity;
+        Vector3 chosenSpot = Vector3.zero;
+        float hideDistanceBehindObstacle = 20;
+
+        for (int i = 0; i < World.HidingSpots.Length; i++)
+        {
+            Vector3 hideDir = World.HidingSpots[i].transform.position - target.transform.position;
+            Vector3 hidePos = World.HidingSpots[i].transform.position + hideDir.normalized * hideDistanceBehindObstacle;
+
+            if (Vector3.Distance(transform.position, hidePos) < bestDistance)
+            {
+                chosenSpot = hidePos;
+                bestDistance = Vector3.Distance(transform.position, hidePos);
+            }
+        }
+        Seek(chosenSpot);
+
+        state = BotState.Hide;
+    }
 }
 
 public enum BotState
 {
     Seek,
     Pursue,
-    Flee
+    Flee,
+    Hide,
 }
