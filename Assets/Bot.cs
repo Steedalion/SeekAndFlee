@@ -34,11 +34,9 @@ public class Bot : MonoBehaviour
         if (isOnCoolDown) return;
         if (OutOfRange)
         {
-            Debug.Log( "Out of range");
             Wander();
             return;
         }
-        
         if (ClearLineOfSightToTarget() && WithinTargetFOV())
         {
             HideBehindObject();
