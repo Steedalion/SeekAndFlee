@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 using Random = UnityEngine.Random;
@@ -19,8 +17,8 @@ public class Bot : MonoBehaviour
 
     private Vector3 ToTarget => target.position - transform.position;
     private bool TargetIsBehind => Vector3.Dot(transform.forward, ToTarget) < 0;
-    float lookAheadDistance => ToTarget.magnitude / (agent.speed + target.GetComponent<Drive>().currentSpeed);
-    Vector3 predictedIntersect => target.position + lookAheadDistance * target.forward;
+    float LookAheadDistance => ToTarget.magnitude / (agent.speed + target.GetComponent<Drive>().currentSpeed);
+    Vector3 PredictedIntersect => target.position + LookAheadDistance * target.forward;
 
     void Start()
     {
@@ -61,14 +59,14 @@ public class Bot : MonoBehaviour
     {
         //TODO: Test
 
-        Flee(predictedIntersect);
+        Flee(PredictedIntersect);
     }
 
     void Pursue()
     {
         //TODO: Test
 
-        Seek(predictedIntersect);
+        Seek(PredictedIntersect);
         state = BotState.Pursue;
     }
 
@@ -121,14 +119,10 @@ public class Bot : MonoBehaviour
 
     void HideBehindObject()
     {
-        GameObject chosenObstacle;
-        float hideDistanceBehindObstacle = 4;
-
-        chosenObstacle = GetNearestObstacle();
-
+        const float hideDistanceBehindObstacle = 4;
+        GameObject chosenObstacle = GetNearestObstacle();
         Vector3 nearestObstaclePosition = GetNearestObstacle().transform.position;
         Vector3 fromTargetToObstacle = nearestObstaclePosition - target.transform.position;
-
         Vector3 intersect = BehindObstacleIntersect(chosenObstacle);
 
         Seek(intersect + fromTargetToObstacle.normalized * hideDistanceBehindObstacle);
@@ -137,17 +131,15 @@ public class Bot : MonoBehaviour
 
     private Vector3 BehindObstacleIntersect(GameObject chosenObstacle)
     {
-        const float DistanceBehindObstacle = 20;
+        const float distanceBehindObstacle = 20;
         const float backRayDistance = 100;
 
         Vector3 position = chosenObstacle.transform.position;
         Vector3 targetToObstacle = position - target.transform.position;
-        ;
         Collider obstacleCollider = chosenObstacle.GetComponent<Collider>();
 
-
         Vector3 positionBehindObstacle =
-            position + targetToObstacle.normalized * DistanceBehindObstacle;
+            position + targetToObstacle.normalized * distanceBehindObstacle;
         Ray backfire = new Ray(positionBehindObstacle, -targetToObstacle);
         obstacleCollider.Raycast(backfire, out RaycastHit info, backRayDistance);
         Vector3 intersectFromBack = info.point;
@@ -161,20 +153,16 @@ public class Bot : MonoBehaviour
         for (int i = 0; i < World.HidingSpots.Length; i++)
         {
             Vector3 hidePos = World.HidingSpots[i].transform.position;
-            if (Vector3.Distance(transform.position, hidePos) < bestDistance)
-            {
-                bestDistance = Vector3.Distance(transform.position, hidePos);
-                bestIndex = i;
-            }
+            if (!(Vector3.Distance(transform.position, hidePos) < bestDistance)) continue;
+            bestDistance = Vector3.Distance(transform.position, hidePos);
+            bestIndex = i;
         }
-
         return World.HidingSpots[bestIndex];
     }
 
-    bool CanSeeTarget()
+    private bool CanSeeTarget()
     {
-        RaycastHit raycastHit;
-        return Physics.Raycast(this.transform.position, ToTarget, out raycastHit) &&
+        return Physics.Raycast(this.transform.position, ToTarget, out RaycastHit raycastHit) &&
                raycastHit.transform.CompareTag("Cop");
     }
 }
