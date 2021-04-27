@@ -29,7 +29,10 @@ public class Bot : MonoBehaviour
 
     void Update()
     {
-        Hide();
+        if (CanSeeTarget())
+        {
+            HideBehindObject();
+        }
     }
 
     void SmartPursue()
@@ -105,24 +108,74 @@ public class Bot : MonoBehaviour
     {
         //TODO: Test
 
-        float bestDistance = Single.PositiveInfinity;
-        Vector3 chosenSpot = Vector3.zero;
-        float hideDistanceBehindObstacle = 20;
+        const float distanceBehindObstacle = 20;
 
-        for (int i = 0; i < World.HidingSpots.Length; i++)
-        {
-            Vector3 hideDir = World.HidingSpots[i].transform.position - target.transform.position;
-            Vector3 hidePos = World.HidingSpots[i].transform.position + hideDir.normalized * hideDistanceBehindObstacle;
-
-            if (Vector3.Distance(transform.position, hidePos) < bestDistance)
-            {
-                chosenSpot = hidePos;
-                bestDistance = Vector3.Distance(transform.position, hidePos);
-            }
-        }
-        Seek(chosenSpot);
+        Vector3 nearestObstaclePosition = GetNearestObstacle().transform.position;
+        Vector3 fromTargetToObstacle = nearestObstaclePosition - target.transform.position;
+        Vector3 hidingSpot = nearestObstaclePosition + fromTargetToObstacle.normalized * distanceBehindObstacle;
+        Seek(hidingSpot);
 
         state = BotState.Hide;
+    }
+
+
+    void HideBehindObject()
+    {
+        GameObject chosenObstacle;
+        float hideDistanceBehindObstacle = 4;
+
+        chosenObstacle = GetNearestObstacle();
+
+        Vector3 nearestObstaclePosition = GetNearestObstacle().transform.position;
+        Vector3 fromTargetToObstacle = nearestObstaclePosition - target.transform.position;
+
+        Vector3 intersect = BehindObstacleIntersect(chosenObstacle);
+
+        Seek(intersect + fromTargetToObstacle.normalized * hideDistanceBehindObstacle);
+        state = BotState.Hide;
+    }
+
+    private Vector3 BehindObstacleIntersect(GameObject chosenObstacle)
+    {
+        const float DistanceBehindObstacle = 20;
+        const float backRayDistance = 100;
+
+        Vector3 position = chosenObstacle.transform.position;
+        Vector3 targetToObstacle = position - target.transform.position;
+        ;
+        Collider obstacleCollider = chosenObstacle.GetComponent<Collider>();
+
+
+        Vector3 positionBehindObstacle =
+            position + targetToObstacle.normalized * DistanceBehindObstacle;
+        Ray backfire = new Ray(positionBehindObstacle, -targetToObstacle);
+        obstacleCollider.Raycast(backfire, out RaycastHit info, backRayDistance);
+        Vector3 intersectFromBack = info.point;
+        return intersectFromBack;
+    }
+
+    private GameObject GetNearestObstacle()
+    {
+        float bestDistance = Single.PositiveInfinity;
+        int bestIndex = 0;
+        for (int i = 0; i < World.HidingSpots.Length; i++)
+        {
+            Vector3 hidePos = World.HidingSpots[i].transform.position;
+            if (Vector3.Distance(transform.position, hidePos) < bestDistance)
+            {
+                bestDistance = Vector3.Distance(transform.position, hidePos);
+                bestIndex = i;
+            }
+        }
+
+        return World.HidingSpots[bestIndex];
+    }
+
+    bool CanSeeTarget()
+    {
+        RaycastHit raycastHit;
+        return Physics.Raycast(this.transform.position, ToTarget, out raycastHit) &&
+               raycastHit.transform.CompareTag("Cop");
     }
 }
 
