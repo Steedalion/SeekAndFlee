@@ -5,12 +5,9 @@ namespace DefaultNamespace
 {
     public class HideState : BotState
     {
-        private bool isOnCoolDown = false;
-
-        protected override void Enter()
+        public HideState(BotState previousState) : base(previousState)
         {
-            base.Enter();
-            StartCooldown();
+            stateName = BotStates.Hide;
         }
 
         protected override void StateUpdate()
@@ -19,58 +16,25 @@ namespace DefaultNamespace
             {
                 ProceedToNextStage(new WanderState(this));
             }
-
-            if (!isOnCoolDown)
-            {
-                HideBehindObject();
-            }
+            Hide();
         }
 
-
-        void StartCooldown()
-    {
-        isOnCoolDown = true;
-        //TODO: Cannot delay cooldown.
-
-        // Invoke(nameof(ResetCooldown), 5);
-        ResetCooldown();
-    }
-
-    void ResetCooldown()
-    {
-        isOnCoolDown = false;
-    }
-
-
-        void HideBehindObject()
+        void Hide()
         {
-            const float hideDistanceBehindObstacle = 4;
-            GameObject chosenObstacle = GetNearestObstacle();
+            //TODO: Test
+
+            const float distanceBehindObstacle = 20;
+
             Vector3 nearestObstaclePosition = GetNearestObstacle().transform.position;
             Vector3 fromTargetToObstacle = nearestObstaclePosition - target.transform.position;
-            Vector3 intersect = BehindObstacleIntersect(chosenObstacle);
-            Seek(intersect + fromTargetToObstacle.normalized * hideDistanceBehindObstacle);
+            Vector3 hidingSpot = nearestObstaclePosition + fromTargetToObstacle.normalized * distanceBehindObstacle;
+            Seek(hidingSpot);
         }
 
-        private Vector3 BehindObstacleIntersect(GameObject chosenObstacle)
+        GameObject GetNearestObstacle()
         {
-            const float distanceBehindObstacle = 20;
-            const float backRayDistance = 100;
+            //TODO: Duplicated in smartHide
 
-            Vector3 position = chosenObstacle.transform.position;
-            Vector3 targetToObstacle = position - target.transform.position;
-            Collider obstacleCollider = chosenObstacle.GetComponent<Collider>();
-
-            Vector3 positionBehindObstacle =
-                position + targetToObstacle.normalized * distanceBehindObstacle;
-            Ray backfire = new Ray(positionBehindObstacle, -targetToObstacle);
-            obstacleCollider.Raycast(backfire, out RaycastHit info, backRayDistance);
-            Vector3 intersectFromBack = info.point;
-            return intersectFromBack;
-        }
-
-        private GameObject GetNearestObstacle()
-        {
             float bestDistance = Single.PositiveInfinity;
             int bestIndex = 0;
             for (int i = 0; i < World.HidingSpots.Length; i++)
@@ -82,11 +46,6 @@ namespace DefaultNamespace
             }
 
             return World.HidingSpots[bestIndex];
-        }
-
-        public HideState(BotState previousState) : base(previousState)
-        {
-            stateName = BotStates.Hide;
         }
     }
 }

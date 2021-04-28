@@ -15,14 +15,14 @@ namespace DefaultNamespace
             stateName = BotStates.Wander;
         }
 
-        public WanderState(HideState hideState) : base(hideState)
+        public WanderState(BotState previousState) : base(previousState)
         {
             stateName = BotStates.Wander;
         }
 
         protected override void StateUpdate()
         {
-            if (!OutOfRange) ProceedToNextStage(new PursueState(this));
+            if (!OutOfRange) ProceedToNextStage(new SmartPursueState(this));
                 Vector3 wanderTarget = new Vector3(Random.Range(-1f, 1f) * wanderJitter, 0,
                     Random.Range(-1f, 1f) * wanderJitter);
                 wanderTarget = wanderTarget.normalized * wanderRadius;

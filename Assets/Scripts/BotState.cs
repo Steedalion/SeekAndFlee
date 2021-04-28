@@ -12,7 +12,7 @@ namespace DefaultNamespace
         protected const float TargetFieldOfView = 60;
         private const float InRangeDistance = 20;
         protected Vector3 ToTarget => target.position - transform.position;
-        bool TargetIsBehind => Vector3.Dot(transform.forward, ToTarget) < 0;
+        protected bool TargetIsBehind => Vector3.Dot(transform.forward, ToTarget) < 0;
         float LookAheadDistance => ToTarget.magnitude / (agent.speed + target.GetComponent<Drive>().currentSpeed);
         protected Vector3 PredictedIntersect => target.position + LookAheadDistance * target.forward;
         protected bool OutOfRange => ToTarget.sqrMagnitude > InRangeDistance * InRangeDistance;
