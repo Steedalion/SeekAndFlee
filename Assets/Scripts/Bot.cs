@@ -7,16 +7,16 @@ public class Bot : MonoBehaviour
 {
     private NavMeshAgent agent;
     public Transform target;
-    public BotState state;
+    public BotStates states;
 
     public float wanderRadius = 10;
     public float wanderDistance = 10;
     public float wanderJitter = 5;
     private Vector3 wanderTarget = Vector3.zero;
+    
     private float targetFieldOfView = 60;
     private float inRangeDistance = 20;
     private bool isOnCoolDown = false;
-
 
     private Vector3 ToTarget => target.position - transform.position;
     private bool TargetIsBehind => Vector3.Dot(transform.forward, ToTarget) < 0;
@@ -93,7 +93,7 @@ public class Bot : MonoBehaviour
         //TODO: Test
 
         Seek(PredictedIntersect);
-        state = BotState.Pursue;
+        states = BotStates.Pursue;
     }
 
     void Seek(Vector3 targetPosition)
@@ -112,7 +112,7 @@ public class Bot : MonoBehaviour
         Vector3 targetLocation = location + awayFrom;
 
         agent.SetDestination(targetLocation);
-        state = BotState.Flee;
+        states = BotStates.Flee;
     }
 
 
@@ -125,7 +125,7 @@ public class Bot : MonoBehaviour
         Vector3 wanderDestination = wanderTarget + Vector3.forward * wanderDistance;
         Vector3 globalDestination = transform.TransformVector(wanderDestination);
         Seek(globalDestination);
-        state = BotState.Wander;
+        states = BotStates.Wander;
     }
 
     void Hide()
@@ -139,7 +139,7 @@ public class Bot : MonoBehaviour
         Vector3 hidingSpot = nearestObstaclePosition + fromTargetToObstacle.normalized * distanceBehindObstacle;
         Seek(hidingSpot);
 
-        state = BotState.Hide;
+        states = BotStates.Hide;
     }
 
 
@@ -152,7 +152,7 @@ public class Bot : MonoBehaviour
         Vector3 intersect = BehindObstacleIntersect(chosenObstacle);
 
         Seek(intersect + fromTargetToObstacle.normalized * hideDistanceBehindObstacle);
-        state = BotState.Hide;
+        states = BotStates.Hide;
     }
 
     private Vector3 BehindObstacleIntersect(GameObject chosenObstacle)
@@ -201,7 +201,7 @@ public class Bot : MonoBehaviour
     }
 }
 
-public enum BotState
+public enum BotStates
 {
     Seek,
     Pursue,
